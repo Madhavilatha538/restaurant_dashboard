@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Live Tables Dashboard</h2>
+<p style="opacity:.8">Status updates are real-time via WebSockets (if Redis running).</p>
+
+<div class="row">
+  {% if user.groups.all|length and user.groups.first.name == "Waiter" or user.is_superuser %}
+    <a class="btn" href="{% url 'order_create' %}">+ New Order</a>
+  {% endif %}
+  {% if user.groups.all|length and user.groups.first.name == "Manager" or user.is_superuser %}
+    <a class="btn secondary" href="{% url 'table_list' %}">Manage Tables</a>
+    <a class="btn secondary" href="{% url 'menu_list' %}">Manage Menu</a>
+  {% endif %}
+</div>
+
+<div class="grid" id="tablesGrid">
+  {% for t in tables %}
+    <div class="card" data-table-id="{{ t.id }}">
+      <h3>Table {{ t.number }}</h3>
+      <div class="badge {{ t.status }}">{{ t.get_status_display }}</div>
+      <p style="opacity:.8">Capacity: {{ t.capacity }}</p>
+      <div class="row">
+        {% if t.status == "occupied" %}
+          <form method="post" action="{% url 'request_bill' t.id %}">{% csrf_token %}
+            <button class="btn secondary" type="submit">Request Bill</button>
+          </form>
+        {% endif %}
+        {% if t.status == "bill_requested" %}
+          <a class="btn" href="{% url 'generate_bill' t.id %}">Generate Bill</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<script>
+(function(){
+  const wsScheme = (location.protocol === "https:") ? "wss" : "ws";
+  const wsUrl = `${wsScheme}://${location.host}/ws/dashboard/`;
+  let socket;
+  try {
+    socket = new WebSocket(wsUrl);
+  } catch(e) { return; }
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if(data.type !== "table_update") return;
+    const p = data.payload;
+    const card = document.querySelector(`[data-table-id="${p.table_id}"]`);
+    if(!card) return;
+    const badge = card.querySelector(".badge");
+    badge.className = `badge ${p.status}`;
+    badge.textContent = p.status.replaceAll("_"," ").replace(/\w/g, c => c.toUpperCase());
+  };
+})();
+</script>
+{% endblock %}

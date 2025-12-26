@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:520px">
+  <h2>{% if item %}Edit{% else %}Create{% endif %} Menu Item</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Name</label>
+    <input name="name" value="{{ item.name|default:'' }}" required />
+    <div style="height:10px"></div>
+
+    <label>Category</label>
+    <select name="category" required>
+      {% for c in categories %}
+        <option value="{{ c }}" {% if item and item.category == c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+
+    <div style="height:10px"></div>
+    <label>Price</label>
+    <input name="price" value="{{ item.price|default:'' }}" required />
+    <div style="height:10px"></div>
+
+    <label style="display:flex;gap:8px;align-items:center">
+      <input type="checkbox" name="is_available" {% if not item or item.is_available %}checked{% endif %} style="width:auto">
+      Available
+    </label>
+
+    <div style="height:12px"></div>
+    <button class="btn" type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}

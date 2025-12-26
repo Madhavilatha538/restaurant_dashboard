@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row" style="justify-content:space-between;align-items:center">
+  <h2>Tables</h2>
+  <a class="btn" href="{% url 'table_create' %}">+ Add Table</a>
+</div>
+<table>
+  <thead><tr><th>#</th><th>Capacity</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    {% for t in tables %}
+      <tr>
+        <td>{{ t.number }}</td>
+        <td>{{ t.capacity }}</td>
+        <td>{{ t.get_status_display }}</td>
+        <td><a class="btn secondary" href="{% url 'table_edit' t.id %}">Edit</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

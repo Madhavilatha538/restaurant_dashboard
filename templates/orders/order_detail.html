@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Order #{{ order.id }} (Table {{ order.table.number }})</h2>
+<div class="card">
+  <div class="row" style="justify-content:space-between;align-items:center">
+    <div>
+      <span class="badge">{{ order.get_status_display }}</span>
+      <div style="opacity:.75">Created: {{ order.created_at }}</div>
+    </div>
+    {% if is_waiter %}
+      <form method="post" action="{% url 'order_update_status' order.id %}">
+        {% csrf_token %}
+        <select name="status">
+          {% for key,val in order.Status.choices %}
+            <option value="{{ key }}" {% if order.status == key %}selected{% endif %}>{{ val }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn" type="submit">Update Status</button>
+      </form>
+    {% endif %}
+  </div>
+
+  <h3>Items</h3>
+  <table>
+    <thead><tr><th>Name</th><th>Qty</th><th>Price</th><th>Line Total</th></tr></thead>
+    <tbody>
+      {% for oi in order.items.all %}
+        <tr>
+          <td>{{ oi.menu_item.name }}</td>
+          <td>{{ oi.quantity }}</td>
+          <td>{{ oi.menu_item.price }}</td>
+          <td>{{ oi.line_total }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+(function(){
+  const wsScheme = (location.protocol === "https:") ? "wss" : "ws";
+  const wsUrl = `${wsScheme}://${location.host}/ws/kitchen/`;
+  try {
+    const socket = new WebSocket(wsUrl);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if(data.type !== "new_order") return;
+      console.log("Kitchen notification:", data.payload);
+    };
+  } catch(e) {}
+})();
+</script>
+{% endblock %}

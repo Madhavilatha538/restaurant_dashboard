@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>New Order (Waiter)</h2>
+<div class="card">
+  <form method="post">
+    {% csrf_token %}
+    <div style="max-width:320px">
+      <label>Table</label>
+      {{ form.table }}
+    </div>
+    <div style="height:14px"></div>
+    <h3>Items</h3>
+    {{ formset.management_form }}
+    <table>
+      <thead><tr><th>Menu Item</th><th>Qty</th><th>Remove</th></tr></thead>
+      <tbody>
+        {% for f in formset %}
+          <tr>
+            <td>{{ f.menu_item }}</td>
+            <td style="max-width:120px">{{ f.quantity }}</td>
+            <td style="max-width:120px">{{ f.DELETE }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="height:12px"></div>
+    <button class="btn" type="submit">Place Order</button>
+  </form>
+</div>
+{% endblock %}

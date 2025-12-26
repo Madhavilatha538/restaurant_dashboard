@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Bill #{{ bill.id }} (Table {{ bill.table.number }})</h2>
+<div class="card">
+  <div class="row" style="justify-content:space-between;align-items:center">
+    <div>
+      <div class="badge">{{ bill.get_status_display }}</div>
+      <div style="opacity:.75">Tax: {{ tax_percent }}%</div>
+    </div>
+    <div class="row">
+      <a class="btn secondary" href="{% url 'bill_pdf' bill.id %}">Download PDF</a>
+      {% if bill.status != "paid" %}
+        <form method="post" action="{% url 'mark_paid' bill.id %}">
+          {% csrf_token %}
+          <button class="btn" type="submit">Mark Paid</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <h3>Items</h3>
+  <table>
+    <thead><tr><th>Name</th><th>Qty</th><th>Price</th><th>Line Total</th></tr></thead>
+    <tbody>
+      {% for oi in bill.order.items.all %}
+        <tr>
+          <td>{{ oi.menu_item.name }}</td>
+          <td>{{ oi.quantity }}</td>
+          <td>{{ oi.menu_item.price }}</td>
+          <td>{{ oi.line_total }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="text-align:right;margin-top:12px">
+    <div>Subtotal: <b>{{ bill.subtotal }}</b></div>
+    <div>Tax: <b>{{ bill.tax_amount }}</b></div>
+    <div style="font-size:18px">Total: <b>{{ bill.total }}</b></div>
+  </div>
+</div>
+{% endblock %}

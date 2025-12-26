@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width:520px">
+  <h2>{% if table %}Edit{% else %}Create{% endif %} Table</h2>
+  <form method="post">
+    {% csrf_token %}
+    <label>Number</label>
+    <input name="number" value="{{ table.number|default:'' }}" required />
+    <div style="height:10px"></div>
+    <label>Capacity</label>
+    <input name="capacity" value="{{ table.capacity|default:'' }}" required />
+    {% if table %}
+      <div style="height:10px"></div>
+      <label>Status</label>
+      <select name="status">
+        {% for key,val in table.Status.choices %}
+          <option value="{{ key }}" {% if table.status == key %}selected{% endif %}>{{ val }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+    <div style="height:12px"></div>
+    <button class="btn" type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}

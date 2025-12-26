@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .auth-wrap{
+    min-height: calc(100vh - 80px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 12px;
+  }
+  .auth-card{
+    width:100%;
+    max-width:500px;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    background:#fff;
+  }
+  .auth-header{
+    padding:18px 18px 14px 18px;
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color:#fff;
+  }
+  .auth-header h2{
+    margin:0;
+    font-size:20px;
+    letter-spacing:.2px;
+  }
+  .auth-header p{
+    margin:6px 0 0;
+    opacity:.85;
+    font-size:13px;
+  }
+  .auth-body{
+    padding:18px;
+  }
+  .field{
+    margin-bottom:12px;
+  }
+  .field label{
+    display:block;
+    font-size:13px;
+    margin-bottom:6px;
+    color:#374151;
+    font-weight:600;
+  }
+  .field input{
+    width:90%;
+    padding:12px 12px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    background:#f9fafb;
+    outline:none;
+    transition: .15s ease;
+    font-size:14px;
+  }
+  .field input:focus{
+    border-color:#111827;
+    background:#fff;
+    box-shadow: 0 0 0 4px rgba(17,24,39,.08);
+  }
+  .auth-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:14px;
+  }
+  .auth-btn{
+    width:100%;
+    padding:12px 14px;
+    border-radius:12px;
+    border:0;
+    cursor:pointer;
+    background:#111827;
+    color:#fff;
+    font-weight:700;
+    font-size:14px;
+    transition:.15s ease;
+  }
+  .auth-btn:hover{
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+  .auth-footer{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:12px;
+    background:#f3f4f6;
+    border:1px dashed #e5e7eb;
+    font-size:13px;
+    color:#374151;
+  }
+  .pill{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:999px;
+    background:#111827;
+    color:#fff;
+    font-size:12px;
+    font-weight:700;
+    margin-right:6px;
+  }
+  .note{
+    font-size:12px;
+    opacity:.75;
+    margin-top:8px;
+  }
+</style>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>🍽️ Restaurant System Login</h2>
+      <p>Sign in to access dashboard, orders, and billing.</p>
+    </div>
+
+    <div class="auth-body">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="field">
+          <label>Username</label>
+          <input name="username" placeholder="e.g. waiter1" autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Your password" autocomplete="current-password" required />
+        </div>
+
+        <div class="auth-actions">
+          <button class="auth-btn" type="submit">Sign in</button>
+        </div>
+
+        <div class="auth-footer">
+          <div style="margin-bottom:6px;"><span class="pill">Demo</span>Use these accounts:</div>
+          <div><b>waiter1</b> / waiter123</div>
+          <div><b>cashier1</b> / cashier123</div>
+          <div><b>manager1</b> / manager123</div>
+          <div class="note">Tip: Manager account can access Tables & Menu management.</div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
